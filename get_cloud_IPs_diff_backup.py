@@ -6,8 +6,6 @@ from numpy import outer
 import requests
 import json
 import pandas as pd
-import os
-import time
 import shutil
 import PureCloudPlatformClientV2
 from PureCloudPlatformClientV2.rest import ApiException
@@ -44,7 +42,6 @@ config_added_ips_file = config_data["ips_added_filename"]
 config_deleted_ips_file = config_data["ips_deleted_filename"]
 config_client_id = config_data["oauth2_client_id"]
 config_client_secret = config_data["oauth2_client_secret"]
-config_parent_dir = config_data["fileparentpath"]
 
 #Setup Genesys Cloud API Environment using OAuth credentials
 region = PureCloudPlatformClientV2.PureCloudRegionHosts[config_gcregion]
@@ -150,15 +147,3 @@ with pd.ExcelWriter(config_deleted_ips_file) as Cloud_Del:
 
 #Copy Latest IP's to Previous IP's. This allows for the script to be run next day.
 shutil.copy2(config_latest_ips_file, config_previous_ips_file)
-
-#Create the date-time string to append to the files to be archived
-file_date_time_stamp = time.strftime("%Y_%m_%d-%H_%M_%S")
-dir_date_stamp = time.strftime("%Y_%m_%d")
-
-#Create copies of Latest, Added and Changed IP's file with the file date-time string
-daily_latest_ips_file = file_date_time_stamp+"_"+config_latest_ips_file
-daily_added_ips_file = file_date_time_stamp+"_"+config_added_ips_file
-daily_deleted_ips_file = file_date_time_stamp+"_"+config_deleted_ips_file
-shutil.copy2(config_latest_ips_file, daily_latest_ips_file)
-shutil.copy2(config_added_ips_file, daily_added_ips_file)
-shutil.copy2(config_deleted_ips_file, daily_deleted_ips_file)
